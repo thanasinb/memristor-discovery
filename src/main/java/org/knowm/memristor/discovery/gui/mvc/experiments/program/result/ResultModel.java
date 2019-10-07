@@ -21,21 +21,71 @@
  * <p>If you have any questions regarding our licensing policy, please contact us at
  * `contact@knowm.org`.
  */
-package org.knowm.memristor.discovery.gui.mvc.experiments;
+package org.knowm.memristor.discovery.gui.mvc.experiments.program.result;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import org.knowm.memristor.discovery.core.Util;
+import org.knowm.memristor.discovery.gui.mvc.experiments.ExperimentPreferences;
+import org.knowm.memristor.discovery.gui.mvc.experiments.Model;
 
-public abstract class ControlView extends JPanel {
+import java.util.ArrayList;
+import java.util.List;
 
-  public final JLabel logoLabel, us_logo;
+public class ResultModel extends Model {
 
-  public ControlView() {
+  /** Min Max params */
+  Double yMaxIV = null;
 
-    logoLabel = new JLabel(Util.createImageIcon("img/logo_200.png"));
-    us_logo = new JLabel(Util.createImageIcon("img/uS-logo-small.png"));
+  Double yMinIV = null;
+
+  Double yMaxGV = null;
+  Double yMinGV = null;
+
+  List<Double> gData = new ArrayList<>();
+
+  public Double getyMaxIV() {
+
+    return yMaxIV;
   }
 
-  public abstract void enableAllChildComponents(boolean enabled);
+  public void setyMaxIV(Double yMaxIV) {
+
+    this.yMaxIV = yMaxIV;
+  }
+
+  public Double getyMinIV() {
+
+    return yMinIV;
+  }
+
+  public void setyMinIV(Double yMinIV) {
+
+    this.yMinIV = yMinIV;
+  }
+
+  public Double getyMaxGV() {
+
+    return yMaxGV;
+  }
+
+  public void setyMaxGV(Double yMaxGV) {
+
+    this.yMaxGV = yMaxGV;
+  }
+
+  public Double getyMinGV() {
+
+    return yMinGV;
+  }
+
+  public void setyMinGV(Double yMinGV) {
+
+    this.yMinGV = yMinGV;
+  }
+
+  public List<Double> getGData() {
+
+    return gData;
+  }
+
+  @Override
+  public void doLoadModelFromPrefs(ExperimentPreferences experimentPreferences) {}
 }

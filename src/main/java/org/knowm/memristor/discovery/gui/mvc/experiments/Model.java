@@ -35,7 +35,8 @@ public abstract class Model {
   public static final String EVENT_NEW_CONSOLE_LOG = "EVENT_NEW_CONSOLE_LOG";
 
   /** runtime variables */
-  public int seriesResistance;
+  public int seriesResistance, targetResistance;
+  public int upperResistance, lowerResistance;
 
   public SwingPropertyChangeSupport swingPropertyChangeSupport;
 
@@ -64,6 +65,29 @@ public abstract class Model {
 
     this.seriesResistance = seriesResistance;
   }
+
+  public int getTargetResistance() {
+
+    return targetResistance;
+  }
+
+  public int getUpperResistance() {
+
+    return upperResistance;
+  }
+
+  public int getLowerResistance() {
+
+    return lowerResistance;
+  }
+
+  public void setTargetResistance(int targetResistance) {
+
+    this.targetResistance = targetResistance;
+    this.upperResistance = (int) (targetResistance*1.05);
+    this.lowerResistance = (int) (targetResistance*0.95);
+  }
+
 
   /**
    * Here is where the Controller registers itself as a listener to model changes.

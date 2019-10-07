@@ -65,6 +65,8 @@ import org.knowm.memristor.discovery.gui.mvc.experiments.ktbitsatsolver.kTBitSat
 import org.knowm.memristor.discovery.gui.mvc.experiments.ktbitsatsolver.kTBitSatSolverPreferencesPanel;
 import org.knowm.memristor.discovery.gui.mvc.experiments.pulse.PulseExperiment;
 import org.knowm.memristor.discovery.gui.mvc.experiments.pulse.PulsePreferencesPanel;
+import org.knowm.memristor.discovery.gui.mvc.experiments.program.ProgramExperiment;
+import org.knowm.memristor.discovery.gui.mvc.experiments.program.ProgramPreferencesPanel;
 import org.knowm.memristor.discovery.gui.mvc.experiments.shelflife.ShelfLifeExperiment;
 import org.knowm.memristor.discovery.gui.mvc.experiments.shelflife.ShelfLifePreferencesPanel;
 import org.knowm.memristor.discovery.gui.mvc.experiments.synapse12.Synapse12Experiment;
@@ -118,7 +120,7 @@ public class MemristorDiscovery
 
     this.appsV2 = new String[]{"Synapse12", "Classify12", "kTBitSatSolver"};
     this.appsV1 = new String[]{"Synapse21", "Classify21"};
-    this.appsV0 = new String[]{"BoardCheck", "Hysteresis", "DC", "Pulse", "ShelfLife",};
+    this.appsV0 = new String[]{"BoardCheck", "Hysteresis", "DC", "Program", "Pulse", "ShelfLife",};
   }
 
   public static void main(String[] args) {
@@ -291,6 +293,9 @@ public class MemristorDiscovery
           switch (e.getActionCommand()) {
             case "Hysteresis":
               experiment = new HysteresisExperiment(dwf, mainFrame.getContentPane(), boardVersion);
+              break;
+            case "Program":
+              experiment = new ProgramExperiment(dwf, mainFrame.getContentPane(), boardVersion);
               break;
             case "Pulse":
               experiment = new PulseExperiment(dwf, mainFrame.getContentPane(), boardVersion);
@@ -509,6 +514,10 @@ public class MemristorDiscovery
         experiment = new DCExperiment(dwf, mainFrameContainer, boardVersion);
         experimentName = "DC";
         break;
+      case "Program":
+        experiment = new ProgramExperiment(dwf, mainFrameContainer, boardVersion);
+        experimentName = "Program";
+        break;
       case "Pulse":
         experiment = new PulseExperiment(dwf, mainFrameContainer, boardVersion);
         experimentName = "Pulse";
@@ -618,6 +627,9 @@ public class MemristorDiscovery
     switch (experimentName) {
       case "Hysteresis":
         result = new HysteresisPreferencesPanel(mainFrame, experimentName).doModal();
+        break;
+      case "Program":
+        result = new ProgramPreferencesPanel(mainFrame, experimentName).doModal();
         break;
       case "Pulse":
         result = new PulsePreferencesPanel(mainFrame, experimentName).doModal();
