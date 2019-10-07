@@ -23,6 +23,7 @@
  */
 package org.knowm.memristor.discovery.gui.mvc.experiments.program.control;
 
+import eu.hansolo.component.SteelCheckBox;
 import org.knowm.memristor.discovery.gui.mvc.experiments.ControlView;
 import org.knowm.memristor.discovery.gui.mvc.experiments.ExperimentPreferences.Waveform;
 
@@ -50,6 +51,7 @@ public class ControlPanel extends ControlView {
   private final JSlider pulseWidthSlider, reversePulseWidthSlider;
   private final JSlider pulseWidthSliderNs, reversePulseWidthSliderNs;
   private final JSlider pulseNumberSlider, reversePulseNumberSlider;
+  private final JSlider readPulseAmplitudeSlider;
 
 //  private final JSlider reversePulseWidthSlider;
 //  private final JSlider reversePulseWidthSliderNs;
@@ -65,6 +67,8 @@ public class ControlPanel extends ControlView {
   private final JTextField targetTextField;
   private JComboBox<Waveform> waveformComboBox;
   private final JLabel debugLabel, debugMsgLabel, debugMsgLabel2;
+  private final SteelCheckBox readOnlyCheckBox;
+  private final int readOnlyCheckBoxId = 1;
 
   public final JButton startStopButton;
 
@@ -75,7 +79,6 @@ public class ControlPanel extends ControlView {
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.HORIZONTAL;
     setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-
     c.gridx = 0;
 
     //    appliedAmplitudeLabel = new JLabel("Applied Amplitude [V]: ");
@@ -96,6 +99,13 @@ public class ControlPanel extends ControlView {
     c.insets = new Insets(0, 10, 4, 0);
     add(energyLabel, c);
 
+    c.gridx++;
+    readOnlyCheckBox = new SteelCheckBox("Read only", readOnlyCheckBoxId, 100, 26);
+    readOnlyCheckBox.setColored(true);
+    readOnlyCheckBox.setRised(true);
+    readOnlyCheckBox.setSelected(false);
+    add(readOnlyCheckBox);
+
     //    energyMemRistorOnlyLabel = new JLabel("Energy M [nJ]: ");
     //    energyMemRistorOnlyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     //    c.gridy++;
@@ -104,9 +114,31 @@ public class ControlPanel extends ControlView {
 
     this.waveformComboBox = new JComboBox<>();
     waveformComboBox.setFocusable(false);
+    c.gridx=0;
     c.gridy++;
     c.insets = new Insets(0, 0, 4, 6);
     add(waveformComboBox, c);
+
+    readPulseAmplitudeSlider = new JSlider(JSlider.HORIZONTAL, -300, 300, 0);
+    readPulseAmplitudeSlider.setBorder(BorderFactory.createTitledBorder("Read Pulse Amplitude [V]"));
+    readPulseAmplitudeSlider.setMajorTickSpacing(100);
+    readPulseAmplitudeSlider.setMinorTickSpacing(10);
+    readPulseAmplitudeSlider.setPaintTicks(true);
+    readPulseAmplitudeSlider.setPaintLabels(true);
+    readPulseAmplitudeSlider.setSnapToTicks(true);
+    Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+    labelTable.put(-300, new JLabel("-.3"));
+    labelTable.put(-200, new JLabel("-.2"));
+    labelTable.put(-100, new JLabel("-.1"));
+    labelTable.put(0, new JLabel("0"));
+    labelTable.put(100, new JLabel(".1"));
+    labelTable.put(200, new JLabel(".2"));
+    labelTable.put(300, new JLabel(".3"));
+    readPulseAmplitudeSlider.setLabelTable(labelTable);
+    c.gridx++;
+    c.insets = new Insets(0, 6, 4, 6);
+    readPulseAmplitudeSlider.setPreferredSize(new Dimension(300, 80));
+    add(readPulseAmplitudeSlider, c);
 
     //    c.gridy++;
     //    c.insets = new Insets(0, 0, 0, 0);
@@ -120,25 +152,25 @@ public class ControlPanel extends ControlView {
     amplitudeSlider = new JSlider(JSlider.HORIZONTAL, -300, 300, 0);
     amplitudeSlider.setBorder(BorderFactory.createTitledBorder("Forward Amplitude [V]"));
     amplitudeSlider.setMajorTickSpacing(100);
-    amplitudeSlider.setMinorTickSpacing(5);
+    amplitudeSlider.setMinorTickSpacing(10);
     amplitudeSlider.setPaintTicks(true);
     amplitudeSlider.setPaintLabels(true);
     amplitudeSlider.setSnapToTicks(true);
-    Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
-
+    labelTable = new Hashtable<>();
     //    labelTable.put(-500, new JLabel("-5"));
     //    labelTable.put(-400, new JLabel("-4"));
-    labelTable.put(-300, new JLabel("-3"));
-    labelTable.put(-200, new JLabel("-2"));
-    labelTable.put(-100, new JLabel("-1"));
+    labelTable.put(-300, new JLabel("-.3"));
+    labelTable.put(-200, new JLabel("-.2"));
+    labelTable.put(-100, new JLabel("-.1"));
     labelTable.put(0, new JLabel("0"));
-    labelTable.put(100, new JLabel("1"));
-    labelTable.put(200, new JLabel("2"));
-    labelTable.put(300, new JLabel("3"));
+    labelTable.put(100, new JLabel(".1"));
+    labelTable.put(200, new JLabel(".2"));
+    labelTable.put(300, new JLabel(".3"));
     //    labelTable.put(400, new JLabel("4"));
     //    labelTable.put(500, new JLabel("5"));
     amplitudeSlider.setLabelTable(labelTable);
 
+    c.gridx=0;
     c.gridy++;
     c.insets = new Insets(0, 6, 4, 6);
     amplitudeSlider.setPreferredSize(new Dimension(300, 80));
@@ -151,10 +183,7 @@ public class ControlPanel extends ControlView {
     reverseAmplitudeSlider.setPaintTicks(true);
     reverseAmplitudeSlider.setPaintLabels(true);
     reverseAmplitudeSlider.setSnapToTicks(true);
-    Hashtable<Integer, JLabel> reverseLabelTable = new Hashtable<>();
-
-    //    labelTable.put(-500, new JLabel("-5"));
-    //    labelTable.put(-400, new JLabel("-4"));
+    labelTable = new Hashtable<>();
     labelTable.put(-300, new JLabel("-3"));
     labelTable.put(-200, new JLabel("-2"));
     labelTable.put(-100, new JLabel("-1"));
@@ -162,8 +191,6 @@ public class ControlPanel extends ControlView {
     labelTable.put(100, new JLabel("1"));
     labelTable.put(200, new JLabel("2"));
     labelTable.put(300, new JLabel("3"));
-    //    labelTable.put(400, new JLabel("4"));
-    //    labelTable.put(500, new JLabel("5"));
     reverseAmplitudeSlider.setLabelTable(labelTable);
 
     c.gridx++;
@@ -382,7 +409,8 @@ public class ControlPanel extends ControlView {
   public void enableAllChildComponents(boolean enabled) {
 
     waveformComboBox.setEnabled(enabled);
-    // memristorVoltageCheckBox.setEnabled(enabled);
+    readPulseAmplitudeSlider.setEnabled(enabled);
+    readOnlyCheckBox.setEnabled(enabled);
     amplitudeSlider.setEnabled(enabled);
     pulseWidthSlider.setEnabled(enabled);
     pulseWidthSliderNs.setEnabled(enabled);
@@ -426,6 +454,15 @@ public class ControlPanel extends ControlView {
     return amplitudeSlider;
   }
 
+  public SteelCheckBox getReadOnlyCheckBox() {
+
+    return readOnlyCheckBox;
+  }
+
+  public JSlider getReadPulseAmplitudeSlider() {
+
+    return readPulseAmplitudeSlider;
+  }
   public JSlider getPulseWidthSlider() {
 
     return pulseWidthSlider;

@@ -37,8 +37,8 @@ public class ProgramPreferencesPanel extends ExperimentPreferencesPanel {
   private JLabel targetResistorLabel;
   private JTextField targetResistorTextField;
 
-  private JLabel amplitudeLabel, reverseAmplitudeLabel;
-  private JTextField amplitudeTextField, reverseAmplitudeTextField;
+  private JLabel amplitudeLabel, reverseAmplitudeLabel, readPulseAmplitudeLabel;
+  private JTextField amplitudeTextField, reverseAmplitudeTextField, readPulseAmplitudeTextField;
 
   private JLabel pulseWidthLabel, reversePulseWidthLabel;
   private JTextField pulseWidthTextField, reversePulseWidthTextField;
@@ -181,6 +181,18 @@ public class ProgramPreferencesPanel extends ExperimentPreferencesPanel {
                             ProgramPreferences.SAMPLE_RATE_INIT_DEFAULT_VALUE)));
     preferencesPanel.add(sampleRateTextField, gc);
 
+    gc.gridx++;
+    this.readPulseAmplitudeLabel = new JLabel("Read Pulse Amplitude [V]:");
+    preferencesPanel.add(readPulseAmplitudeLabel, gc);
+
+    gc.gridx++;
+    this.readPulseAmplitudeTextField = new JTextField(12);
+    this.readPulseAmplitudeTextField.setText(
+            String.valueOf(
+                    experimentPreferences.getDouble(
+                            ProgramPreferences.READ_PULSE_AMPLITUDE_INIT_INT_KEY,
+                            ProgramPreferences.READ_PULSE_AMPLITUDE_INIT_INT_DEFAULT_VALUE)));
+    preferencesPanel.add(readPulseAmplitudeTextField, gc);
   }
 
   @Override
@@ -192,6 +204,8 @@ public class ProgramPreferencesPanel extends ExperimentPreferencesPanel {
         ProgramPreferences.SERIES_R_INIT_KEY, Integer.parseInt(seriesResistorTextField.getText()));
     experimentPreferences.setInteger(
         ProgramPreferences.TARGET_R_INIT_KEY, Integer.parseInt(targetResistorTextField.getText()));
+    experimentPreferences.setDouble(
+            ProgramPreferences.READ_PULSE_AMPLITUDE_INIT_INT_KEY, Double.parseDouble(readPulseAmplitudeTextField.getText()));
     experimentPreferences.setFloat(
         ProgramPreferences.AMPLITUDE_INIT_FLOAT_KEY, Float.parseFloat(amplitudeTextField.getText()));
     experimentPreferences.setInteger(

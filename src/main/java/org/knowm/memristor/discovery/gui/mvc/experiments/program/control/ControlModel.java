@@ -60,7 +60,8 @@ public class ControlModel extends Model {
   private boolean isStartToggled = false;
 
   private double readPulseWidth = 25E-6;
-  private double readPulseAmplitude = .1;
+//  private double readPulseAmplitude = .1;
+  private double readPulseAmplitude;
   private double parasiticReadCapacitance = 140E-12;
 
   // used to compute resistance give read pulse voltage and takes into account parasitic capacitance
@@ -72,9 +73,9 @@ public class ControlModel extends Model {
   /** Constructor */
   public ControlModel(int boardVersion) {
     this.boardVersion = boardVersion;
-    if (boardVersion == 2) {
-      readPulseAmplitude = -readPulseAmplitude;
-    }
+//    if (boardVersion == 2) {
+//      readPulseAmplitude = -readPulseAmplitude;
+//    }
   }
 
   @Override
@@ -93,6 +94,13 @@ public class ControlModel extends Model {
                     ProgramPreferences.TARGET_R_INIT_KEY, ProgramPreferences.TARGET_R_INIT_DEFAULT_VALUE);
     upperResistance = (int) (targetResistance*1.05);
     lowerResistance = (int) (targetResistance*0.95);
+
+    readPulseAmplitude = experimentPreferences.getDouble(
+            ProgramPreferences.READ_PULSE_AMPLITUDE_INIT_INT_KEY,
+            ProgramPreferences.READ_PULSE_AMPLITUDE_INIT_INT_DEFAULT_VALUE);
+    if (boardVersion == 2) {
+      readPulseAmplitude = -readPulseAmplitude;
+    }
 
     amplitude =
         experimentPreferences.getFloat(
@@ -477,6 +485,13 @@ public class ControlModel extends Model {
 
   public void setReadPulseAmplitude(double readPulseAmplitude) {
     this.readPulseAmplitude = readPulseAmplitude;
+    rcComputer =
+            new RC_ResistanceComputer(
+                    boardVersion,
+                    readPulseAmplitude,
+                    readPulseWidth,
+                    seriesResistance,
+                    parasiticReadCapacitance);
   }
 
   public double getParasiticReadCapacitance() {

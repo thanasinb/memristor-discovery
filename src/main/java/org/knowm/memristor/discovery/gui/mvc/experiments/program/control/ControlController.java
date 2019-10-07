@@ -85,8 +85,12 @@ public class ControlController extends Controller {
                   Waveform.QuarterSine,
                   Waveform.HalfSine
                 }));
-
-    controlPanel.getAmplitudeSlider().setValue((int) (controlModel.getAmplitude() * 100));
+    controlPanel.getReadPulseAmplitudeSlider().setValue((int) (controlModel.getReadPulseAmplitude()));
+    controlPanel
+          .getReadPulseAmplitudeSlider()
+          .setBorder(
+                  BorderFactory.createTitledBorder("Read Pulse Amplitude [V] = " + controlModel.getReadPulseAmplitude()));
+    controlPanel.getReadPulseAmplitudeSlider().setValue((int) (100 * controlModel.getAmplitude()));
     controlPanel
         .getAmplitudeSlider()
         .setBorder(
@@ -184,6 +188,26 @@ public class ControlController extends Controller {
                     controlPanel.getWaveformComboBox().getSelectedItem().toString());
               }
             });
+
+      controlPanel
+              .getReadPulseAmplitudeSlider()
+              .addChangeListener(
+                      new ChangeListener() {
+
+                          @Override
+                          public void stateChanged(ChangeEvent e) {
+
+                              JSlider source = (JSlider) e.getSource();
+                              if (!(source.getValueIsAdjusting())) {
+                                  controlModel.setReadPulseAmplitude(source.getValue() / (double) 1000);
+                                  controlPanel
+                                          .getReadPulseAmplitudeSlider()
+                                          .setBorder(
+                                                  BorderFactory.createTitledBorder(
+                                                          "Read Pulse Amplitude [V] = " + controlModel.getReadPulseAmplitude()));
+                              }
+                          }
+                      });
 
     controlPanel
         .getAmplitudeSlider()

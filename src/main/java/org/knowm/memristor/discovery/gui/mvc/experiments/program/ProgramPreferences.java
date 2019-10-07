@@ -45,6 +45,8 @@ public class ProgramPreferences extends ExperimentPreferences {
   public static final String WAVEFORM_INIT_STRING_DEFAULT_VALUE = "Square";
   public static final String NUM_PULSES_INIT_KEY = PREFIX + "NUM_PULSES_INIT_KEY";
   public static final int NUM_PULSES_INIT_DEFAULT_VALUE = 1;
+  public static final String READ_PULSE_AMPLITUDE_INIT_INT_KEY = PREFIX + "READ_AMPLITUDE_INIT_INT_KEY";
+  public static final double READ_PULSE_AMPLITUDE_INIT_INT_DEFAULT_VALUE = .1;
   public static final String AMPLITUDE_INIT_FLOAT_KEY = PREFIX + "AMPLITUDE_INIT_FLOAT_KEY";
   public static final float AMPLITUDE_INIT_FLOAT_DEFAULT_VALUE = 1f;
   public static final String PULSE_WIDTH_INIT_KEY = PREFIX + "PERIOD_INIT_KEY";
