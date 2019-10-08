@@ -67,8 +67,10 @@ public class ControlPanel extends ControlView {
   private final JTextField targetTextField;
   private JComboBox<Waveform> waveformComboBox;
   private final JLabel debugLabel, debugMsgLabel, debugMsgLabel2;
-  private final SteelCheckBox readOnlyCheckBox;
+  private final SteelCheckBox readOnlyCheckBox, oneShotCheckBox, saveCheckBox;
   private final int readOnlyCheckBoxId = 1;
+  private final int oneShotCheckBoxId = 2;
+  private final int saveCheckBoxId = 3;
 
   public final JButton startStopButton;
 
@@ -99,13 +101,6 @@ public class ControlPanel extends ControlView {
     c.insets = new Insets(0, 10, 4, 0);
     add(energyLabel, c);
 
-    c.gridx++;
-    readOnlyCheckBox = new SteelCheckBox("Read only", readOnlyCheckBoxId, 100, 26);
-    readOnlyCheckBox.setColored(true);
-    readOnlyCheckBox.setRised(true);
-    readOnlyCheckBox.setSelected(false);
-    add(readOnlyCheckBox);
-
     //    energyMemRistorOnlyLabel = new JLabel("Energy M [nJ]: ");
     //    energyMemRistorOnlyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     //    c.gridy++;
@@ -118,27 +113,6 @@ public class ControlPanel extends ControlView {
     c.gridy++;
     c.insets = new Insets(0, 0, 4, 6);
     add(waveformComboBox, c);
-
-    readPulseAmplitudeSlider = new JSlider(JSlider.HORIZONTAL, -300, 300, 0);
-    readPulseAmplitudeSlider.setBorder(BorderFactory.createTitledBorder("Read Pulse Amplitude [V]"));
-    readPulseAmplitudeSlider.setMajorTickSpacing(100);
-    readPulseAmplitudeSlider.setMinorTickSpacing(10);
-    readPulseAmplitudeSlider.setPaintTicks(true);
-    readPulseAmplitudeSlider.setPaintLabels(true);
-    readPulseAmplitudeSlider.setSnapToTicks(true);
-    Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
-    labelTable.put(-300, new JLabel("-.3"));
-    labelTable.put(-200, new JLabel("-.2"));
-    labelTable.put(-100, new JLabel("-.1"));
-    labelTable.put(0, new JLabel("0"));
-    labelTable.put(100, new JLabel(".1"));
-    labelTable.put(200, new JLabel(".2"));
-    labelTable.put(300, new JLabel(".3"));
-    readPulseAmplitudeSlider.setLabelTable(labelTable);
-    c.gridx++;
-    c.insets = new Insets(0, 6, 4, 6);
-    readPulseAmplitudeSlider.setPreferredSize(new Dimension(300, 80));
-    add(readPulseAmplitudeSlider, c);
 
     //    c.gridy++;
     //    c.insets = new Insets(0, 0, 0, 0);
@@ -156,7 +130,7 @@ public class ControlPanel extends ControlView {
     amplitudeSlider.setPaintTicks(true);
     amplitudeSlider.setPaintLabels(true);
     amplitudeSlider.setSnapToTicks(true);
-    labelTable = new Hashtable<>();
+    Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
     //    labelTable.put(-500, new JLabel("-5"));
     //    labelTable.put(-400, new JLabel("-4"));
     labelTable.put(-300, new JLabel("-.3"));
@@ -360,6 +334,34 @@ public class ControlPanel extends ControlView {
     c.insets = new Insets(0, 5, 14, 5);
     add(targetTextField, c);
 
+    readPulseAmplitudeSlider = new JSlider(JSlider.HORIZONTAL, -300, 300, 0);
+    readPulseAmplitudeSlider.setBorder(BorderFactory.createTitledBorder("Read Pulse Amplitude [V]"));
+    readPulseAmplitudeSlider.setMajorTickSpacing(100);
+    readPulseAmplitudeSlider.setMinorTickSpacing(10);
+    readPulseAmplitudeSlider.setPaintTicks(true);
+    readPulseAmplitudeSlider.setPaintLabels(true);
+    readPulseAmplitudeSlider.setSnapToTicks(true);
+    labelTable = new Hashtable<>();
+    labelTable.put(-300, new JLabel("-.3"));
+    labelTable.put(-200, new JLabel("-.2"));
+    labelTable.put(-100, new JLabel("-.1"));
+    labelTable.put(0, new JLabel("0"));
+    labelTable.put(100, new JLabel(".1"));
+    labelTable.put(200, new JLabel(".2"));
+    labelTable.put(300, new JLabel(".3"));
+    readPulseAmplitudeSlider.setLabelTable(labelTable);
+    c.gridx = 0;
+    c.gridy++;
+    c.insets = new Insets(0, 6, 4, 6);
+    readPulseAmplitudeSlider.setPreferredSize(new Dimension(300, 80));
+    add(readPulseAmplitudeSlider, c);
+
+    debugLabel = new JLabel("Debug Message");
+    debugLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    c.gridx++;
+    c.insets = new Insets(0, 10, 4, 0);
+    add(debugLabel, c);
+
     sampleRateLabel = new JLabel("Sample Period [s]");
     sampleRateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     c.gridx = 0;
@@ -367,11 +369,11 @@ public class ControlPanel extends ControlView {
     c.insets = new Insets(0, 10, 4, 0);
     add(sampleRateLabel, c);
 
-    debugLabel = new JLabel("Debug Message");
-    sampleRateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    debugMsgLabel = new JLabel("X1");
+    debugMsgLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     c.gridx++;
     c.insets = new Insets(0, 10, 4, 0);
-    add(debugLabel, c);
+    add(debugMsgLabel, c);
 
     sampleRateTextField = new JTextField();
     sampleRateTextField.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -380,11 +382,34 @@ public class ControlPanel extends ControlView {
     c.insets = new Insets(0, 5, 14, 5);
     add(sampleRateTextField, c);
 
-    debugMsgLabel = new JLabel("XXX");
-    debugMsgLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    debugMsgLabel2 = new JLabel("X2");
+    debugMsgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
     c.gridx++;
     c.insets = new Insets(0, 10, 4, 0);
-    add(debugMsgLabel, c);
+    add(debugMsgLabel2, c);
+
+    JPanel j = new JPanel();
+    c.gridx = 0;
+    c.gridy++;
+    readOnlyCheckBox = new SteelCheckBox("Read only", readOnlyCheckBoxId, 100, 26);
+    readOnlyCheckBox.setColored(true);
+    readOnlyCheckBox.setRised(true);
+    readOnlyCheckBox.setSelected(false);
+    j.add(readOnlyCheckBox);
+
+    oneShotCheckBox = new SteelCheckBox("One shot", readOnlyCheckBoxId, 100, 26);
+    oneShotCheckBox.setColored(true);
+    oneShotCheckBox.setRised(true);
+    oneShotCheckBox.setSelected(false);
+    j.add(oneShotCheckBox);
+
+    saveCheckBox = new SteelCheckBox("Save", saveCheckBoxId, 100, 26);
+    saveCheckBox.setColored(true);
+    saveCheckBox.setRised(true);
+    saveCheckBox.setSelected(false);
+    j.add(saveCheckBox);
+    c.insets = new Insets(0, 10, 4, 0);
+    add(j, c);
 
     startStopButton = new JButton("Start");
     startStopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -392,12 +417,6 @@ public class ControlPanel extends ControlView {
     c.gridy++;
     c.insets = new Insets(0, 0, 0, 0);
     add(startStopButton, c);
-
-    debugMsgLabel2 = new JLabel("XXX");
-    debugMsgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
-    c.gridx++;
-    c.insets = new Insets(0, 10, 4, 0);
-    add(debugMsgLabel2, c);
 
     c.gridx = 0;
     c.gridy++;
