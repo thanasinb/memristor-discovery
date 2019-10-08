@@ -119,6 +119,7 @@ public class ProgramExperiment extends Experiment {
 
                   controlModel.setStartToggled(true);
                   controlPanel.getStartStopButton().setText("Stop");
+                  controlPanel.enableCheckBoxes(false);
 
                   // start AD2 waveform 1 and start AD2 capture on channel 1 and 2
                   experimentCaptureWorker = new CaptureWorker();
@@ -127,6 +128,7 @@ public class ProgramExperiment extends Experiment {
 
                   controlModel.setStartToggled(false);
                   controlPanel.getStartStopButton().setText("Start");
+                  controlPanel.enableCheckBoxes(true);
 
                   // cancel the worker
                   experimentCaptureWorker.cancel(true);
@@ -194,12 +196,14 @@ public class ProgramExperiment extends Experiment {
 
     @Override
     protected Boolean doInBackground() throws Exception {
-      timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-      filepath = System.getProperty("user.dir") + "\\" + timeStamp;
-      File file = new File(filepath);
-      if (!file.exists()) {
-        if (!file.mkdir()) {
-          return false;
+      if(controlModel.isSave()){
+        timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+        filepath = System.getProperty("user.dir") + "\\" + timeStamp;
+        File file = new File(filepath);
+        if (!file.exists()) {
+          if (!file.mkdir()) {
+            return false;
+          }
         }
       }
 
@@ -210,17 +214,23 @@ public class ProgramExperiment extends Experiment {
           lastR = controlModel.getLastR();
           initialPulseTrainCaptured = false;
         }
-        if (lastR < controlModel.getLowerResistance()) {
-          if (!reverseWrite()) // negative pulse
-            return false;
-          else
-            initialPulseTrainCaptured = false;
-        } else if (lastR > controlModel.getUpperResistance()) {
-          if (!forwardWrite())
-            return false;
-          else
-            initialPulseTrainCaptured = false;
-        } else {
+        if(!controlModel.isReadOnly()){
+          if (lastR < controlModel.getLowerResistance()) {
+            if (!reverseWrite()) // negative pulse
+              return false;
+            else
+              initialPulseTrainCaptured = false;
+          } else if (lastR > controlModel.getUpperResistance()) {
+            if (!forwardWrite())
+              return false;
+            else
+              initialPulseTrainCaptured = false;
+          } else {
+            controlPanel.getStartStopButton().setText("Done!");
+            break;
+          }
+        }
+        if (controlModel.isOneShot()) {
           controlPanel.getStartStopButton().setText("Done!");
           break;
         }
@@ -379,21 +389,24 @@ public class ProgramExperiment extends Experiment {
                 new double[][] {
                         timeData, V1Trimmed, V2Trimmed, VMemristor, current, conductance, null
                 });
-        File file = new File(filepath + "\\" + String.valueOf(count++)+ "-forward.csv");
-        try{
-          FileWriter outputfile = new FileWriter(file);
-          CSVWriter writer = new CSVWriter(outputfile);
-          List<String[]> data = new ArrayList<String[]>();
-          data.add(double2string(timeData));
-          data.add(double2string(V1Trimmed));
-          data.add(double2string(V2Trimmed));
-          data.add(double2string(VMemristor));
-          data.add(double2string(current));
-          data.add(double2string(conductance));
-          writer.writeAll(data);
-          writer.close();
-        } catch (IOException e) {
-          return false;
+
+        if(controlModel.isSave()){
+          File file = new File(filepath + "\\" + String.valueOf(count++)+ "-forward.csv");
+          try{
+            FileWriter outputfile = new FileWriter(file);
+            CSVWriter writer = new CSVWriter(outputfile);
+            List<String[]> data = new ArrayList<String[]>();
+            data.add(double2string(timeData));
+            data.add(double2string(V1Trimmed));
+            data.add(double2string(V2Trimmed));
+            data.add(double2string(VMemristor));
+            data.add(double2string(current));
+            data.add(double2string(conductance));
+            writer.writeAll(data);
+            writer.close();
+          } catch (IOException e) {
+            return false;
+          }
         }
       }
 
@@ -559,21 +572,24 @@ public class ProgramExperiment extends Experiment {
                 new double[][] {
                         timeData, V1Trimmed, V2Trimmed, VMemristor, current, conductance, null
                 });
-        File file = new File(filepath + "\\" + String.valueOf(count++)+ "-reverse.csv");
-        try{
-          FileWriter outputfile = new FileWriter(file);
-          CSVWriter writer = new CSVWriter(outputfile);
-          List<String[]> data = new ArrayList<String[]>();
-          data.add(double2string(timeData));
-          data.add(double2string(V1Trimmed));
-          data.add(double2string(V2Trimmed));
-          data.add(double2string(VMemristor));
-          data.add(double2string(current));
-          data.add(double2string(conductance));
-          writer.writeAll(data);
-          writer.close();
-        } catch (IOException e) {
-          return false;
+
+        if(controlModel.isSave()){
+          File file = new File(filepath + "\\" + String.valueOf(count++)+ "-reverse.csv");
+          try{
+            FileWriter outputfile = new FileWriter(file);
+            CSVWriter writer = new CSVWriter(outputfile);
+            List<String[]> data = new ArrayList<String[]>();
+            data.add(double2string(timeData));
+            data.add(double2string(V1Trimmed));
+            data.add(double2string(V2Trimmed));
+            data.add(double2string(VMemristor));
+            data.add(double2string(current));
+            data.add(double2string(conductance));
+            writer.writeAll(data);
+            writer.close();
+          } catch (IOException e) {
+            return false;
+          }
         }
       }
 
@@ -718,8 +734,9 @@ public class ProgramExperiment extends Experiment {
                             timeData, V1Trimmed, V2Trimmed, VMemristor, null, null, conductanceAve
                     });
           }
-          File file = new File(filepath + "\\" + String.valueOf(count++)+ "-read.csv");
-          try{
+          if(controlModel.isSave()){
+            File file = new File(filepath + "\\" + String.valueOf(count++)+ "-read.csv");
+            try{
               FileWriter outputfile = new FileWriter(file);
               CSVWriter writer = new CSVWriter(outputfile);
               List<String[]> data = new ArrayList<String[]>();
@@ -730,8 +747,9 @@ public class ProgramExperiment extends Experiment {
               data.add(double2string(conductanceAve));
               writer.writeAll(data);
               writer.close();
-          } catch (IOException e) {
+            } catch (IOException e) {
               return false;
+            }
           }
         }
         // Stop Analog In and Out

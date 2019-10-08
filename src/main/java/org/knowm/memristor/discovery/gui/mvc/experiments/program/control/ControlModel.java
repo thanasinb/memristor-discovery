@@ -44,20 +44,20 @@ public class ControlModel extends Model {
 
   public ProgramPreferences.Waveform waveform;
   private boolean isMemristorVoltageDropSelected = false;
+  private boolean isReadOnly = false;
+  private boolean isOneShot = false;
+  private boolean isSave = false;
+  private boolean isStartToggled = false;
+
   private float amplitude, reverseAmplitude;
   private int pulseWidth, reversePulseWidth; // model store pulse width in nanoseconds
   private double dutyCycle, reverseDutyCycle; // 0 to 1.
   private int pulseNumber, reversePulseNumber;
-//  private String debugMsg;
-  // private double appliedAmplitude;
-
   private double appliedCurrent;
   private double appliedEnergy;
   //  private double appliedMemristorEnergy;
   private double lastG;
   private int sampleRate;
-
-  private boolean isStartToggled = false;
 
   private double readPulseWidth = 25E-6;
 //  private double readPulseAmplitude = .1;
@@ -234,6 +234,33 @@ public class ControlModel extends Model {
             readPulseWidth,
             seriesResistance,
             parasiticReadCapacitance);
+  }
+
+  public boolean isReadOnly() {
+
+    return isReadOnly;
+  }
+
+  public boolean isOneShot() {
+
+    return isOneShot;
+  }
+
+  public boolean isSave() {
+
+    return isSave;
+  }
+
+  public void setReadOnly(boolean isReadOnly){
+    this.isReadOnly = isReadOnly;
+  }
+
+  public void setOneShot(boolean isOneShot){
+    this.isOneShot = isOneShot;
+  }
+
+  public void setSave(boolean isSave){
+    this.isSave = isSave;
   }
 
   public float getAmplitude() {

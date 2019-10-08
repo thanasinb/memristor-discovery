@@ -430,6 +430,8 @@ public class ControlPanel extends ControlView {
     waveformComboBox.setEnabled(enabled);
     readPulseAmplitudeSlider.setEnabled(enabled);
     readOnlyCheckBox.setEnabled(enabled);
+    oneShotCheckBox.setEnabled(!enabled);
+    saveCheckBox.setEnabled(enabled);
     amplitudeSlider.setEnabled(enabled);
     pulseWidthSlider.setEnabled(enabled);
     pulseWidthSliderNs.setEnabled(enabled);
@@ -444,6 +446,30 @@ public class ControlPanel extends ControlView {
     sampleRateTextField.setEnabled(enabled);
     targetTextField.setEnabled(enabled);
     startStopButton.setEnabled(enabled);
+  }
+
+  public void enableProgrammingComponents(boolean enabled){
+
+    waveformComboBox.setEnabled(enabled);
+    oneShotCheckBox.setEnabled(!enabled);
+    amplitudeSlider.setEnabled(enabled);
+    pulseWidthSlider.setEnabled(enabled);
+    pulseWidthSliderNs.setEnabled(enabled);
+    pulseNumberSlider.setEnabled(enabled);
+    dutyCycleSlider.setEnabled(enabled);
+    reverseAmplitudeSlider.setEnabled(enabled);
+    reversePulseWidthSlider.setEnabled(enabled);
+    reversePulseWidthSliderNs.setEnabled(enabled);
+    reversePulseNumberSlider.setEnabled(enabled);
+    reverseDutyCycleSlider.setEnabled(enabled);
+    seriesTextField.setEnabled(enabled);
+    targetTextField.setEnabled(enabled);
+  }
+
+  public void enableCheckBoxes(boolean enabled){
+    readOnlyCheckBox.setEnabled(enabled);
+    oneShotCheckBox.setEnabled(enabled);
+    saveCheckBox.setEnabled(enabled);
   }
 
   public void updateEnergyGUI(
@@ -478,10 +504,19 @@ public class ControlPanel extends ControlView {
     return readOnlyCheckBox;
   }
 
+  public SteelCheckBox getOneShotCheckBox(){
+    return oneShotCheckBox;
+  }
+
+  public SteelCheckBox getSaveCheckBox(){
+    return saveCheckBox;
+  }
+
   public JSlider getReadPulseAmplitudeSlider() {
 
     return readPulseAmplitudeSlider;
   }
+
   public JSlider getPulseWidthSlider() {
 
     return pulseWidthSlider;

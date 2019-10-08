@@ -23,6 +23,7 @@
  */
 package org.knowm.memristor.discovery.gui.mvc.experiments.program.control;
 
+import eu.hansolo.component.SteelCheckBox;
 import org.knowm.memristor.discovery.DWFProxy;
 import org.knowm.memristor.discovery.gui.mvc.experiments.Controller;
 import org.knowm.memristor.discovery.gui.mvc.experiments.ExperimentPreferences.Waveform;
@@ -188,6 +189,47 @@ public class ControlController extends Controller {
                     controlPanel.getWaveformComboBox().getSelectedItem().toString());
               }
             });
+
+        controlPanel
+                .getReadOnlyCheckBox()
+                .addChangeListener(
+                        new ChangeListener() {
+                            @Override
+                            public void stateChanged(ChangeEvent e) {
+                                SteelCheckBox source = (SteelCheckBox)e.getSource();
+                                controlModel.setReadOnly(source.isSelected());
+                                if(!controlModel.isReadOnly()){
+                                    controlPanel.getOneShotCheckBox().setSelected(false);
+                                }
+                                controlPanel.enableProgrammingComponents(!controlModel.isReadOnly());
+                            }
+                        }
+                );
+
+      controlPanel
+              .getOneShotCheckBox()
+              .addChangeListener(
+                      new ChangeListener() {
+                          @Override
+                          public void stateChanged(ChangeEvent e) {
+                              SteelCheckBox source = (SteelCheckBox)e.getSource();
+                              controlModel.setOneShot(source.isSelected());
+                              controlPanel.getSampleRateTextField().setEnabled(!controlModel.isOneShot());
+                          }
+                      }
+              );
+
+      controlPanel
+              .getSaveCheckBox()
+              .addChangeListener(
+                      new ChangeListener() {
+                          @Override
+                          public void stateChanged(ChangeEvent e) {
+                              SteelCheckBox source = (SteelCheckBox)e.getSource();
+                              controlModel.setSave(source.isSelected());
+                          }
+                      }
+              );
 
       controlPanel
               .getReadPulseAmplitudeSlider()
