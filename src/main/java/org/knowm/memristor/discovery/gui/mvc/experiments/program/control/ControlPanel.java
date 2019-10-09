@@ -403,7 +403,7 @@ public class ControlPanel extends ControlView {
     oneShotCheckBox.setSelected(false);
     j.add(oneShotCheckBox);
 
-    saveCheckBox = new SteelCheckBox("Save", saveCheckBoxId, 100, 26);
+    saveCheckBox = new SteelCheckBox("Auto save", saveCheckBoxId, 100, 26);
     saveCheckBox.setColored(true);
     saveCheckBox.setRised(true);
     saveCheckBox.setSelected(false);

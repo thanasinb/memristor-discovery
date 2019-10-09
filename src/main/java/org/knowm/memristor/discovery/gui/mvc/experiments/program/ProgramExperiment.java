@@ -46,9 +46,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +63,7 @@ public class ProgramExperiment extends Experiment {
   private ResultPanel resultPanel;
   private double lastR;
   private int count=0;
-  private String timeStamp, filepath;
+  private String timeStamp, filepath, filename;
   // SwingWorkers
   private SwingWorker experimentCaptureWorker;
 
@@ -129,7 +127,14 @@ public class ProgramExperiment extends Experiment {
                   controlModel.setStartToggled(false);
                   controlPanel.getStartStopButton().setText("Start");
                   controlPanel.enableCheckBoxes(true);
-
+                  if(controlModel.isSave()){
+                    try {
+                      Thread.sleep(50);
+                    } catch (InterruptedException ex) {
+                      ex.printStackTrace();
+                    }
+                    resultController.saveGChart(filename);
+                  }
                   // cancel the worker
                   experimentCaptureWorker.cancel(true);
                 }
@@ -205,6 +210,7 @@ public class ProgramExperiment extends Experiment {
             return false;
           }
         }
+        count = 0;
       }
 
       while (controlModel.isStartToggled()) {
@@ -212,6 +218,7 @@ public class ProgramExperiment extends Experiment {
           return false;
         else {
           lastR = controlModel.getLastR();
+//          System.out.println(String.valueOf(lastR));
           initialPulseTrainCaptured = false;
         }
         if(!controlModel.isReadOnly()){
@@ -385,29 +392,15 @@ public class ProgramExperiment extends Experiment {
           G = G < 0 ? 0 : G;
           conductance[i] = G;
         }
+
+        if(controlModel.isSave()){
+          filename = filepath + "\\" + String.valueOf(count++) + "-forward-";
+        }
+
         publish(
                 new double[][] {
                         timeData, V1Trimmed, V2Trimmed, VMemristor, current, conductance, null
                 });
-
-        if(controlModel.isSave()){
-          File file = new File(filepath + "\\" + String.valueOf(count++)+ "-forward.csv");
-          try{
-            FileWriter outputfile = new FileWriter(file);
-            CSVWriter writer = new CSVWriter(outputfile);
-            List<String[]> data = new ArrayList<String[]>();
-            data.add(double2string(timeData));
-            data.add(double2string(V1Trimmed));
-            data.add(double2string(V2Trimmed));
-            data.add(double2string(VMemristor));
-            data.add(double2string(current));
-            data.add(double2string(conductance));
-            writer.writeAll(data);
-            writer.close();
-          } catch (IOException e) {
-            return false;
-          }
-        }
       }
 
       while (!initialPulseTrainCaptured) {
@@ -568,29 +561,15 @@ public class ProgramExperiment extends Experiment {
           G = G < 0 ? 0 : G;
           conductance[i] = G;
         }
+
+        if(controlModel.isSave()){
+          filename = filepath + "\\" + String.valueOf(count++) + "-reverse-";
+        }
+
         publish(
                 new double[][] {
                         timeData, V1Trimmed, V2Trimmed, VMemristor, current, conductance, null
                 });
-
-        if(controlModel.isSave()){
-          File file = new File(filepath + "\\" + String.valueOf(count++)+ "-reverse.csv");
-          try{
-            FileWriter outputfile = new FileWriter(file);
-            CSVWriter writer = new CSVWriter(outputfile);
-            List<String[]> data = new ArrayList<String[]>();
-            data.add(double2string(timeData));
-            data.add(double2string(V1Trimmed));
-            data.add(double2string(V2Trimmed));
-            data.add(double2string(VMemristor));
-            data.add(double2string(current));
-            data.add(double2string(conductance));
-            writer.writeAll(data);
-            writer.close();
-          } catch (IOException e) {
-            return false;
-          }
-        }
       }
 
       while (!initialPulseTrainCaptured) {
@@ -718,6 +697,10 @@ public class ProgramExperiment extends Experiment {
             resistance = controlModel.getRcComputer().getRFromV(vRead);
           }
 
+          if(controlModel.isSave()){
+            filename = filepath + "\\" + String.valueOf(count++) + "-read-";
+          }
+
           double[] conductanceAve =
                   new double[] {
                           (1 / resistance) * ConductancePreferences.CONDUCTANCE_UNIT.getDivisor()
@@ -733,23 +716,6 @@ public class ProgramExperiment extends Experiment {
                     new double[][] {
                             timeData, V1Trimmed, V2Trimmed, VMemristor, null, null, conductanceAve
                     });
-          }
-          if(controlModel.isSave()){
-            File file = new File(filepath + "\\" + String.valueOf(count++)+ "-read.csv");
-            try{
-              FileWriter outputfile = new FileWriter(file);
-              CSVWriter writer = new CSVWriter(outputfile);
-              List<String[]> data = new ArrayList<String[]>();
-              data.add(double2string(timeData));
-              data.add(double2string(V1Trimmed));
-              data.add(double2string(V2Trimmed));
-              data.add(double2string(VMemristor));
-              data.add(double2string(conductanceAve));
-              writer.writeAll(data);
-              writer.close();
-            } catch (IOException e) {
-              return false;
-            }
           }
         }
         // Stop Analog In and Out
@@ -782,21 +748,38 @@ public class ProgramExperiment extends Experiment {
 
       double[][] newestChunk = chunks.get(chunks.size() - 1);
 
-      if (newestChunk[6] == null) {
+      if (newestChunk[6] == null) { // writing cycle
         initialPulseTrainCaptured = true;
 
-        resultController.updateCaptureChartData(
-            newestChunk[0],
-            newestChunk[1],
-            newestChunk[2],
-            newestChunk[3],
-            controlModel.getPulseWidth(),
-            controlModel.getAmplitude());
-        resultController.updateIVChartData(
-            newestChunk[0],
-            newestChunk[4],
-            controlModel.getPulseWidth(),
-            controlModel.getAmplitude());
+        if(controlModel.isSave()){
+          resultController.updateCaptureChartData(
+                  newestChunk[0],
+                  newestChunk[1],
+                  newestChunk[2],
+                  newestChunk[3],
+                  controlModel.getPulseWidth(),
+                  controlModel.getAmplitude(),
+                  filename);
+          resultController.updateIVChartData(
+                  newestChunk[0],
+                  newestChunk[4],
+                  controlModel.getPulseWidth(),
+                  controlModel.getAmplitude(),
+                  filename);
+        }else {
+          resultController.updateCaptureChartData(
+                  newestChunk[0],
+                  newestChunk[1],
+                  newestChunk[2],
+                  newestChunk[3],
+                  controlModel.getPulseWidth(),
+                  controlModel.getAmplitude());
+          resultController.updateIVChartData(
+                  newestChunk[0],
+                  newestChunk[4],
+                  controlModel.getPulseWidth(),
+                  controlModel.getAmplitude());
+        }
 
         if (resultPanel.getCaptureButton().isSelected()) {
           resultPanel.switch2CaptureChart();
@@ -809,23 +792,34 @@ public class ProgramExperiment extends Experiment {
           resultController.repaintReadPulseCaptureChart();
         }
 
-      } else {
+      } else { // reading cycle
         // update read pulse capture chart....
         initialPulseTrainCaptured = true;
-
-        resultController.updateReadPulseCaptureChartData(
-            newestChunk[0],
-            newestChunk[1],
-            newestChunk[2],
-            newestChunk[3],
-            controlModel.getPulseWidth(),
-            controlModel.getAmplitude());
-        resultController.repaintReadPulseCaptureChart();
 
         // update G chart
         controlModel.setLastG(newestChunk[6][0]);
         resultController.updateGChartData(controlModel.getLastG(), controlModel.getLastRAsString());
         resultController.repaintGChart();
+
+        if(controlModel.isSave()){
+          resultController.updateReadPulseCaptureChartData(
+                  newestChunk[0],
+                  newestChunk[1],
+                  newestChunk[2],
+                  newestChunk[3],
+                  controlModel.getPulseWidth(),
+                  controlModel.getAmplitude(),
+                  filename);
+        }else{
+          resultController.updateReadPulseCaptureChartData(
+                  newestChunk[0],
+                  newestChunk[1],
+                  newestChunk[2],
+                  newestChunk[3],
+                  controlModel.getPulseWidth(),
+                  controlModel.getAmplitude());
+        }
+        resultController.repaintReadPulseCaptureChart();
 
         controlModel.updateEnergyData();
         controlPanel.updateEnergyGUI(

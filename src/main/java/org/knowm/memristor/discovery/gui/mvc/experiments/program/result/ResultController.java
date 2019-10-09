@@ -24,9 +24,12 @@
 package org.knowm.memristor.discovery.gui.mvc.experiments.program.result;
 
 import org.knowm.memristor.discovery.core.Util;
+import org.knowm.xchart.CSVExporter;
+import org.knowm.xchart.VectorGraphicsEncoder;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class ResultController {
 
@@ -162,6 +165,27 @@ public class ResultController {
     resultPanel.getCaptureChart().updateXYSeries("V_Memristor", timeData, v1Minusv2, null);
   }
 
+  public void updateCaptureChartData(
+          double[] timeData,
+          double[] v1,
+          double[] v2,
+          double[] v1Minusv2,
+          int pulseWidth,
+          double amplitude,
+          String filename) {
+
+    resultPanel.getCaptureChart().setTitle(getVtChartTitle(amplitude, pulseWidth));
+    resultPanel.getCaptureChart().updateXYSeries("V1(1+)", timeData, v1, null);
+    resultPanel.getCaptureChart().updateXYSeries("V2(2+)", timeData, v2, null);
+    resultPanel.getCaptureChart().updateXYSeries("V_Memristor", timeData, v1Minusv2, null);
+    try {
+      VectorGraphicsEncoder.saveVectorGraphic(resultPanel.getCaptureChart(), filename + "capture-graph", VectorGraphicsEncoder.VectorGraphicsFormat.SVG);
+      CSVExporter.writeCSVColumns(resultPanel.getCaptureChart(), filename + "capture-");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public void updateIVChartData(
       double[] timeData, double[] current, int pulseWidth, double amplitude) {
 
@@ -171,6 +195,21 @@ public class ResultController {
     resultPanel.getITChart().setTitle(getIVChartTitle(amplitude, pulseWidth));
     resultPanel.getITChart().updateXYSeries("it", timeData, current, null);
   }
+
+  public void updateIVChartData(
+          double[] timeData, double[] current, int pulseWidth, double amplitude, String filename) {
+
+    resultPanel.getITChart().getStyler().setYAxisMax(resultModel.getyMaxIV());
+    resultPanel.getITChart().getStyler().setYAxisMin(resultModel.getyMinIV());
+
+    resultPanel.getITChart().setTitle(getIVChartTitle(amplitude, pulseWidth));
+    resultPanel.getITChart().updateXYSeries("it", timeData, current, null);
+    try {
+      VectorGraphicsEncoder.saveVectorGraphic(resultPanel.getITChart(), filename + "it-graph", VectorGraphicsEncoder.VectorGraphicsFormat.SVG);
+      CSVExporter.writeCSVColumns(resultPanel.getITChart(), filename);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }  }
 
   public void updateReadPulseCaptureChartData(
       double[] timeData,
@@ -187,6 +226,28 @@ public class ResultController {
     resultPanel
         .getReadPulseCaptureChart()
         .updateXYSeries("V_Memristor", timeData, vMemristor, null);
+  }
+
+  public void updateReadPulseCaptureChartData(
+          double[] timeData,
+          double[] v1,
+          double[] v2,
+          double[] vMemristor,
+          int pulseWidth,
+          double amplitude,
+          String filename) {
+
+    resultPanel.getReadPulseCaptureChart().updateXYSeries("V1(1+)", timeData, v1, null);
+    resultPanel.getReadPulseCaptureChart().updateXYSeries("V2(2+)", timeData, v2, null);
+    resultPanel
+            .getReadPulseCaptureChart()
+            .updateXYSeries("V_Memristor", timeData, vMemristor, null);
+    try {
+      VectorGraphicsEncoder.saveVectorGraphic(resultPanel.getReadPulseCaptureChart(), filename + "graph", VectorGraphicsEncoder.VectorGraphicsFormat.SVG);
+      CSVExporter.writeCSVColumns(resultPanel.getReadPulseCaptureChart(), filename);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void updateGChartData(double conductance, String resistance) {
@@ -272,4 +333,12 @@ public class ResultController {
 
     return Util.round(amplitude, 2);
   }
+
+  public void saveGChart(String filename) {
+    try {
+      VectorGraphicsEncoder.saveVectorGraphic(resultPanel.getGChart(), filename + "g", VectorGraphicsEncoder.VectorGraphicsFormat.SVG);
+      CSVExporter.writeCSVColumns(resultPanel.getGChart(), filename);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }  }
 }
