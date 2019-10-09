@@ -23,7 +23,6 @@
  */
 package org.knowm.memristor.discovery.gui.mvc.experiments.program;
 
-import com.opencsv.CSVWriter;
 import org.knowm.memristor.discovery.DWFProxy;
 import org.knowm.memristor.discovery.core.PostProcessDataUtils;
 import org.knowm.memristor.discovery.core.WaveformUtils;
