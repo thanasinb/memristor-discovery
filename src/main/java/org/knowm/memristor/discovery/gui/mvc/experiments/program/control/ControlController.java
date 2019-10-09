@@ -91,7 +91,7 @@ public class ControlController extends Controller {
           .getReadPulseAmplitudeSlider()
           .setBorder(
                   BorderFactory.createTitledBorder("Read Pulse Amplitude [V] = " + controlModel.getReadPulseAmplitude()));
-    controlPanel.getReadPulseAmplitudeSlider().setValue((int) (100 * controlModel.getAmplitude()));
+    controlPanel.getAmplitudeSlider().setValue((int) (100 * controlModel.getAmplitude()));
     controlPanel
         .getAmplitudeSlider()
         .setBorder(
