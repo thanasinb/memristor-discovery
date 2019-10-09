@@ -86,7 +86,7 @@ public class ControlController extends Controller {
                   Waveform.QuarterSine,
                   Waveform.HalfSine
                 }));
-    controlPanel.getReadPulseAmplitudeSlider().setValue((int) (controlModel.getReadPulseAmplitude()));
+    controlPanel.getReadPulseAmplitudeSlider().setValue((int) (1000 * controlModel.getReadPulseAmplitude()));
     controlPanel
           .getReadPulseAmplitudeSlider()
           .setBorder(

@@ -153,7 +153,7 @@ public class ControlPanel extends ControlView {
     reverseAmplitudeSlider = new JSlider(JSlider.HORIZONTAL, -300, 300, 0);
     reverseAmplitudeSlider.setBorder(BorderFactory.createTitledBorder("Reverse Amplitude [V]"));
     reverseAmplitudeSlider.setMajorTickSpacing(100);
-    reverseAmplitudeSlider.setMinorTickSpacing(5);
+    reverseAmplitudeSlider.setMinorTickSpacing(10);
     reverseAmplitudeSlider.setPaintTicks(true);
     reverseAmplitudeSlider.setPaintLabels(true);
     reverseAmplitudeSlider.setSnapToTicks(true);
